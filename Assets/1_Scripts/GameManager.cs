@@ -9,15 +9,19 @@ public class GameManager : MonoBehaviour
     public GameObject gameoverText; // 게임오버 시 활성화할 텍스트 게임 오브젝트
     public Text timeText;   // 생존 시간을 표시할 텍스트 컴포넌트
     public Text recordText; // 최고 기록을 표시할 텍스트 컴포넌트
+    public Text revivalText;    // 부활 텍스트
 
     private float surviveTime;  // 생존 시간
     private bool isGameover;    // 게임오버 상태
+
+    public int revival;    // 부활 가능 수
 
     void Start()
     {
         // 생존 시간과 게임오버 상태 초기화
         // surviveTime = 0;
         isGameover = false;
+        //PlayerPrefs.SetFloat("BestTime", 0f);
     }
 
     void Update()
@@ -39,6 +43,7 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadScene("SampleScene");
             }
         }
+        revivalText.text = "부활 : " + revival;
     }
 
     // 현재 게임을 게임오버 상태로 변경하는 메서드
@@ -55,6 +60,9 @@ public class GameManager : MonoBehaviour
         // 이전까지의 최고 기록보다 현재 생존 시간이 더 크다면
         if (surviveTime > bestTime)
         {
+            revival += 5;   // 부활권 5개 추가
+            PlayerPrefs.SetFloat("RevivalCnt", revival);
+
             // 최고 기록 값을 현재 생존 시간 값으로 변경
             bestTime = surviveTime;
             // 변경된 최고 기록을 BestTime 키로 저장
@@ -63,5 +71,15 @@ public class GameManager : MonoBehaviour
 
         // 최고 기록을 recordText 텍스트 컴포넌트를 이용해 표시
         recordText.text = "Best Time : " + (int)bestTime;
+    }
+
+    public void RevivalGame()
+    {
+        if (revival > 0)
+        {
+            SceneManager.LoadScene("SampleScene");
+            revival--;
+            PlayerPrefs.SetFloat("RevivalCnt", revival);
+        }
     }
 }
