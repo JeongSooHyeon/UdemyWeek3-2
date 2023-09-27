@@ -23,7 +23,7 @@ public class Bullet : MonoBehaviour
         PlayerController playerController = other.GetComponent<PlayerController>();
 
         // 상대방으로부터 PlayerController 컴포넌트를 가져오는 데 성공
-        if(playerController != null)
+        if(playerController != null && !playerController.isInvincible)
         {
             // 상대방 PlayerController 컴포넌트의 Die() 메서드 실행
             playerController.Die();

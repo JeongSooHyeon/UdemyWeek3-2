@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public Text timeText;   // 생존 시간을 표시할 텍스트 컴포넌트
     public Text recordText; // 최고 기록을 표시할 텍스트 컴포넌트
     public Text revivalText;    // 부활 텍스트
+    public GameObject InvincibleText; // 무적 모드 텍스트
+
+    public GameObject player;
 
     private float surviveTime;  // 생존 시간
     private bool isGameover;    // 게임오버 상태
@@ -21,7 +24,11 @@ public class GameManager : MonoBehaviour
         // 생존 시간과 게임오버 상태 초기화
         // surviveTime = 0;
         isGameover = false;
-        //PlayerPrefs.SetFloat("BestTime", 0f);
+
+/*        PlayerPrefs.SetFloat("BestTime", 0f);
+        PlayerPrefs.SetInt("RevivalCnt", 0);*/
+
+        revival = PlayerPrefs.GetInt("RevivalCnt");
     }
 
     void Update()
@@ -60,8 +67,8 @@ public class GameManager : MonoBehaviour
         // 이전까지의 최고 기록보다 현재 생존 시간이 더 크다면
         if (surviveTime > bestTime)
         {
-            revival += 5;   // 부활권 5개 추가
-            PlayerPrefs.SetFloat("RevivalCnt", revival);
+            revival++;   // 부활권 1개 추가
+            PlayerPrefs.SetInt("RevivalCnt", revival);
 
             // 최고 기록 값을 현재 생존 시간 값으로 변경
             bestTime = surviveTime;
@@ -77,9 +84,28 @@ public class GameManager : MonoBehaviour
     {
         if (revival > 0)
         {
-            SceneManager.LoadScene("SampleScene");
+            player.SetActive(true);
+            RestartGame();
             revival--;
-            PlayerPrefs.SetFloat("RevivalCnt", revival);
+            PlayerPrefs.SetInt("RevivalCnt", revival);
         }
+    }
+
+    private void RestartGame()
+    {
+        // 현재 상태를 게임오버 상태로 전환
+        isGameover = false;
+        // 게임오버 텍스트 게임 오브젝트를 활성화
+        gameoverText.SetActive(false);
+        player.GetComponent<PlayerController>().isInvincible = true;    // 플레이어 무적 상태
+        StartCoroutine("InvincibleMode");
+    }
+
+    IEnumerator InvincibleMode()
+    {
+        InvincibleText.SetActive(true);
+        yield return new WaitForSeconds(3.0f);  // 3초 쉬고 
+        player.GetComponent<PlayerController>().isInvincible = false;   // 무적 상태 해제
+        InvincibleText.SetActive(false);
     }
 }

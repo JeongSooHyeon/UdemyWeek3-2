@@ -24,7 +24,6 @@ public class Rotator : MonoBehaviour
             rotationDir = Random.Range(0, 2);
             if(rotationDir == 0)    // 25ÆÛ¼¾Æ® È®·ü
             {
-                Debug.Log("¹æÇâ ¹Ù²ã");
                 rotationSpeed *= -1;
             }
         }
